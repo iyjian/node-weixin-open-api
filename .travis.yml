@@ -1,8 +1,9 @@
 language: node_js
+os:
+  - linux
 node_js:
 - '10.16'
 deploy:
   provider: npm
   email: 52445078@qq.com
-  api_key:
-    secure: TYGPepS5ZcypgO5Jyrv1ba4nVoEAEQHTrb55QYdwzNmbtQe/ZOtJLyh64RWjHFReTPj/jjkFyAOiSpofqJ7Wre5t9w6LNtezS5plqePgJef16S243KIhRxygYV0gXx2WgdbfuqX6aYb80bGZ/B/RZc8N8+yUUu3mNG53OTEySJb+vgegUA63Sq9Ey4KoV1xsHyyCsWlAB32rRv+TIaTZiTloPAclK+tW6RyfIRh29U/IzDLN/HKB82XgTE0OUO8IVX8+HMqPz/8HXKN5IS83ct27wpUBVRVJyfAHOR5I3i7twakaHQsQvdTx4MWU1cZyAk0zLisg8/+eBcPzg+O8JJWRaHZbs2M7KhES+U1YtiZgt4x7HWuui5YadN1Bh+KWiRbvXlp0otn1CdoUiVQhPKx7eJfWq9zuvbgJXTuvT+0TdA2ltHvMXQnz6C8DXMbApfzOX3uSSMsAIvQZ4L4ouDodEegc8nVpFG0VWd4BNjmkC/HTyGhPKnL9JsLcPI3n5gZbLdLkN3NGh20+z4gd/nGjCelQWbDqVfKDGI1HUwXRX4GoEKwQ0BE6v2MkSinBUxpCy8zaK2t3Zh0xJaDACFZeP6eS6jpQYqKgL8JC957IIw5p/p6AHDREGkqOqW2vHE9sM37gxs1fA/O7VWOrvMsnjclwM8Ckf0NZU/IQKGA=
+  api_key: $NPM_TOKEN
