@@ -5,5 +5,6 @@ node_js:
 - '10.16'
 deploy:
   provider: npm
+  edge: true
   email: 52445078@qq.com
   api_key: $NPM_TOKEN
