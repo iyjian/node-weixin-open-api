@@ -356,12 +356,45 @@ module.exports = () => {
         }, fn)
       }
 
-      // 发送客服消息--文本消息
+      /**
+       * https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Service_Center_messages.html
+       * 中搜索 客服接口-发消息
+       * 
+       * 发送文字消息
+         {
+            "touser":"OPENID",
+            "msgtype":"text",
+            "text":
+            {
+              "content":"Hello World"
+            }
+          }
+
+          中间可以插入小程序链接（其中href中指定的链接是在客户端不支持小程序的时候使用的跳转页面）
+          <a href="http://www.qq.com"
+             data-miniprogram-appid="appid"
+            data-miniprogram-path="pages/index/index">
+            点击跳小程序
+          </a>
+
+          发送小程序卡片
+          {
+            "touser":"OPENID",
+            "msgtype":"miniprogrampage",
+            "miniprogrampage":
+            {
+              "title":"title",
+              "appid":"appid",
+              "pagepath":"pagepath",
+              "thumb_media_id":"thumb_media_id"
+            }
+          }          
+       */
       sdk.sendKfMsg = (form, fn) => {
         async.auto({
           getAccessToken,
           delMenu: ['getAccessToken', (dummy, cb) => {
-            const url = `${wxConfig.domain}/cgi-bin/message/template/send?access_token=${sdk.accessToken}`
+            const url = `${wxConfig.domain}/cgi-bin/message/custom/send?access_token=${sdk.accessToken}`
             http.post(url, { json: form }, (error, response, body) => {
               if (error) {
                 cb(error, null)
