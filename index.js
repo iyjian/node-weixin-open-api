@@ -563,7 +563,7 @@ module.exports = () => {
                 req.session.openId = result
                 next()
               } else {
-                const originUrl = new URL('http://' + req.hostname + req.originalUrl)
+                const originUrl = new URL(`${req.protocol}://${req.hostname}${req.originalUrl}`)
                 originUrl.searchParams.delete('code')
                 const searchParams = originUrl.searchParams.toString()
                 const url = encodeURIComponent(`${originUrl.origin}${originUrl.pathname}?${searchParams}`)
@@ -571,7 +571,7 @@ module.exports = () => {
               }
             })
           } else {
-            const url = encodeURIComponent(`http://${req.hostname}${req.originalUrl}`)
+            const url = encodeURIComponent(`${req.protocol}://${req.hostname}${req.originalUrl}`)
             res.redirect(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${wxConfig.appId}&redirect_uri=${url}&response_type=code&scope=snsapi_base&state=rta#wechat_redirect`)
           }
         }
