@@ -516,12 +516,25 @@ module.exports = () => {
           }
         })
       }
+      
       // 发送客服消息(模板消息）
       // to: 发给谁？ openId
       // templateId: 客服模板编号
       // link: 点击模板后到达的页面
       // customData: 在指定模板中自定义的消息
-      sdk.sendTemplateMsg = (to, templateId, link, customData, fn) => {
+      /**
+       * 发送模板消息
+       * to
+       * templateId
+       * link
+       * customData
+       * miniprogram {appid: 'wxe54fe812586edb10', path: ''}
+       * fn
+       */
+      sdk.sendTemplateMsg = (to, templateId, link, customData, miniprogram, fn) => {
+        if (typeof miniprogram === 'function') {
+          fn = miniprogram
+        }
         async.auto({
           getAccessToken,
           send: ['getAccessToken', (dummy, cb) => {
