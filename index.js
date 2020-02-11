@@ -544,7 +544,8 @@ module.exports = () => {
                 touser: to,
                 template_id: templateId,
                 url: link,
-                data: customData
+                data: customData,
+                miniprogram
               }
             }, (error, response, body) => {
               if (error) {
