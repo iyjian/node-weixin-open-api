@@ -5,11 +5,13 @@ const async = require('async')
 const moment = require('moment')
 const parseString = require('xml2js').parseString
 const axios = require('axios')
-const token = require('./libs/token')
+const randomstring = require("randomstring")
+const Token = require('./libs/Token')
 
+let token
 module.exports = () => {
   return {
-    init: (wxConfig) => {
+    init: async (wxConfig) => {
       const sdk = {
         token: wxConfig.token,
         appId: wxConfig.appId,
@@ -22,77 +24,48 @@ module.exports = () => {
         debug: wxConfig.debug,
         redisConfig: wxConfig.redisConfig
       }
+      
+      token = new Token(sdk)
 
-      // let updateToken, getToken
-
-      if (sdk.redisConfig) {
-        token.setRedisStore(sdk)
-      } else {
-        token.setFileStore(sdk)
-      }
+      await token.setRedisStore(sdk)
 
       // 返回 timeStamp
-      const getTimeStamp = () => {
-        return moment().format('X')
-      }
+      const getTimeStamp = () => moment().format('X')
 
       // private: 构造nonceStr
-      const getNonceStr = () => {
-        const $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-        const maxPos = $chars.length
-        let noceStr = ''
-        for (let i = 0; i < 32; i++) {
-          noceStr += $chars.charAt(Math.floor(Math.random() * maxPos))
-        }
-        return noceStr
-      }
+      const getNonceStr = () => randomstring.generate(32)
 
       // private: 参数签名
-      const generateSign = (obj) => {
-        const params = Object.keys(obj).sort().map(key => `${key}=` + obj[key])
-        return crypto.createHash('sha1').update(params.join('&')).digest('hex')
-      }
+      const generateSign = obj => crypto.createHash('sha1').update(Object.keys(obj).sort().map(key => `${key}=` + obj[key]).join('&')).digest('hex')
 
       // exports.generateSign = generateSign
 
       // private: 刷新token
-      const getAccessToken = (fn) => {
+      const getAccessToken = () => {
         // 先取一下accessToken
-        token.getAccessToken(async (error, accessToken) => {
-          sdk.accessToken = accessToken.accessToken
-          sdk.expireTime = accessToken.expireTime
-          if (new Date().getTime() > sdk.expireTime) {
-            // 如果token超时，或者没有token(expireTime 初始值为0)
-            // 则开始获取token
-            const url = `${sdk.domain}/cgi-bin/token?grant_type=client_credential&appid=${sdk.appId}&secret=${sdk.appSecret}`
-            const response = await axios.get(url)
-            if (response.data.errcode) {
-              console.error('getAccessToken', response.data)
-              fn(response.data.errmsg, null)
-            } else {
-              const { access_token, expires_in } = response.data
-              token.setAccessToken(access_token, expires_in)
-              sdk.accessToken = access_token
-              sdk.expireTime = expires_in
-              fn(null, sdk.accessToken)
-            }
-          } else {
-            fn(null, sdk.accessToken)
-          }
-        })
-      }
+        const accessToken = await token.getAccessToken()
 
-      // get access token的同步版本
-      const getAccessTokenSync = () => {
-        return new Promise((resolve, reject) => {
-          getAccessToken((error, result) => {
-            if (error) {
-              reject(error)
-            } else {
-              resolve(result)
-            }
-          })
-        })
+        sdk.accessToken = accessToken.accessToken
+        sdk.expireTime = accessToken.expireTime
+
+        if (new Date().getTime() > sdk.expireTime) {
+          // 如果token超时，或者没有token(expireTime 初始值为0)
+          // 则开始获取token
+          const url = `${sdk.domain}/cgi-bin/token?grant_type=client_credential&appid=${sdk.appId}&secret=${sdk.appSecret}`
+          const response = await axios.get(url)
+          if (response.data.errcode) {
+            console.error('getAccessToken', response.data)
+            throw(new Error('getAccessToken'))
+          } else {
+            const { access_token, expires_in } = response.data
+            await token.setAccessToken(access_token, expires_in)
+            sdk.accessToken = access_token
+            sdk.expireTime = expires_in
+          }
+        } else {
+          // fn(null, sdk.accessToken)
+          console.log('getAccessToken', 'no need to refresh')
+        }
       }
 
       const getJsApiTicket = (fn) => {
@@ -106,6 +79,7 @@ module.exports = () => {
               getAccessToken,
               (cb) => {
                 const url = `https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${sdk.accessToken}&type=jsapi`
+                // const response = await axios.get(url)
                 http.get(url, { json: true }, (error, response, body) => {
                   if (error) {
                     cb(error, null)
