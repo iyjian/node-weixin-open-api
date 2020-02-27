@@ -58,7 +58,7 @@ module.exports = () => {
       // private: 刷新token
       const getAccessToken = (fn) => {
         // 先取一下accessToken
-        token.getAccessToken(async (error, accessToken) => {
+        token.getAccessToken(sdk, async (error, accessToken) => {
           sdk.accessToken = accessToken.accessToken
           sdk.expireTime = accessToken.expireTime
           if (new Date().getTime() > sdk.expireTime) {
@@ -71,7 +71,7 @@ module.exports = () => {
               fn(response.data.errmsg, null)
             } else {
               const { access_token, expires_in } = response.data
-              token.setAccessToken(access_token, expires_in)
+              token.setAccessToken(sdk, access_token, expires_in)
               sdk.accessToken = access_token
               sdk.expireTime = expires_in
               fn(null, sdk.accessToken)
@@ -97,7 +97,7 @@ module.exports = () => {
 
       const getJsApiTicket = (fn) => {
         // 先获取一下jsApiTicket
-        token.getJSTicket((error, jsTicket) => {
+        token.getJSTicket(sdk, (error, jsTicket) => {
           sdk.expireTimeJS = jsTicket.expireTime
           sdk.jsApiTicket = jsTicket.jsApiTicket
           if (new Date().getTime() > sdk.expireTimeJS) {
@@ -124,7 +124,7 @@ module.exports = () => {
                 console.log('jsApiTicket Error %s', error)
                 fn(error, null)
               } else {
-                const jsTicket = token.setJSTicket(result[1].ticket, result[1].expires_in)
+                const jsTicket = token.setJSTicket(sdk, result[1].ticket, result[1].expires_in)
                 sdk.jsApiTicket = jsTicket.jsApiTicket
                 sdk.expireTimeJS = jsTicket.expireTime
                 fn(null, sdk.jsApiTicket)
