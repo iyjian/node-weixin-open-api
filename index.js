@@ -609,7 +609,7 @@ module.exports = () => {
                 req.session.wxProfile = result
                 next()
               } else {
-                const originUrl = new URL('http://' + req.hostname + req.originalUrl)
+                const originUrl = new URL(`${req.protocol}://${req.hostname}${req.originalUrl}`)
                 originUrl.searchParams.delete('code')
                 const searchParams = originUrl.searchParams.toString()
                 const url = `${originUrl.origin}${originUrl.pathname}?${searchParams}`
