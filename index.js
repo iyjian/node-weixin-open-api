@@ -19,6 +19,7 @@ module.exports = () => {
         expireTimeJS: 0,
         jsApiTicket: '',
         domain: wxConfig.domain,
+        bizDomain: wxConfig.bizDomain,
         debug: wxConfig.debug,
         redisConfig: wxConfig.redisConfig
       }
@@ -612,12 +613,12 @@ module.exports = () => {
                 const originUrl = new URL(`${req.protocol}://${req.hostname}${req.originalUrl}`)
                 originUrl.searchParams.delete('code')
                 const searchParams = originUrl.searchParams.toString()
-                const url = `${originUrl.origin}${originUrl.pathname}?${searchParams}`
+                const url = `${wxConfig.bizDomain}${originUrl.pathname}?${searchParams}`
                 res.redirect(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${wxConfig.appId}&redirect_uri=${url}&response_type=code&scope=snsapi_userinfo&state=rta#wechat_redirect`)
               }
             })
           } else {
-            const url = `http://${req.hostname}${req.originalUrl}`
+            const url = `${wxConfig.bizDomain}${req.originalUrl}`
             res.redirect(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${wxConfig.appId}&redirect_uri=${url}&response_type=code&scope=snsapi_userinfo&state=rta#wechat_redirect`)
           }
         }
