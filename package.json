@@ -21,7 +21,7 @@
   "license": "ISC",
   "dependencies": {
     "async": "^2.5.0",
-    "axios": "^0.19.1",
+    "axios": "^1.2.0",
     "moment": "^2.24.0",
     "redis": "^2.8.0",
     "request": "^2.83.0",
