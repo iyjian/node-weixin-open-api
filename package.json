@@ -1,6 +1,6 @@
 {
   "name": "node-weixin-media-platform-api",
-  "version": "0.6.10",
+  "version": "0.6.11",
   "description": "weixin media platform common api",
   "main": "index.js",
   "scripts": {
@@ -21,7 +21,7 @@
   "license": "ISC",
   "dependencies": {
     "async": "^2.5.0",
-    "axios": ">=0.18.1",
+    "axios": "^0.19.1",
     "moment": "^2.24.0",
     "redis": "^2.8.0",
     "request": "^2.83.0",
